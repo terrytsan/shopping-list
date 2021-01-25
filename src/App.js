@@ -7,6 +7,7 @@ import {Component} from "react";
 import dummyItems from "./dummyItems.json";
 import * as Constants from './constants.js';
 import NewItemModal from "./components/NewItemModal";
+import EditItemModal from "./components/EditItemModal";
 
 class App extends Component {
 	state = {
@@ -15,17 +16,37 @@ class App extends Component {
 		currLstSelectedItems: [],
 		showNewItemModal: false,
 		newItemName: "",
-		newItemHighPriority: false
+		newItemHighPriority: false,
+		singleItemSelected: false,
+		selectedItemId: -1,
+		showEditItemModal: false,
+		editItemName: ""
+	};
+
+	// Checks if only a single item is selected
+	checkSingleItemSelected = () => {
+		let singleItemSelected = this.state.prevLstSelectedItems.length + this.state.currLstSelectedItems.length === 1;
+		this.setState({singleItemSelected: singleItemSelected});
+
+		if (singleItemSelected) {
+			if (this.state.prevLstSelectedItems.length === 1) {
+				this.setState({selectedItemId: this.state.prevLstSelectedItems[0]});
+			} else {
+				this.setState({selectedItemId: this.state.currLstSelectedItems[0]});
+			}
+		} else {
+			this.setState({selectedItemId: -1});
+		}
 	};
 
 	handlePreviousLstOnChange = (event) => {
 		let selected = Array.from(event.target.selectedOptions, sel => parseInt(sel.value));
-		this.setState({prevLstSelectedItems: selected});
+		this.setState({prevLstSelectedItems: selected}, this.checkSingleItemSelected);
 	};
 
 	handleCurrentLstOnChange = (event) => {
 		let selected = Array.from(event.target.selectedOptions, sel => parseInt(sel.value));
-		this.setState({currLstSelectedItems: selected});
+		this.setState({currLstSelectedItems: selected}, this.checkSingleItemSelected);
 	};
 
 	handleLeftArrowOnClick = () => {
@@ -42,7 +63,7 @@ class App extends Component {
 		});
 
 		this.setState({items: this.reAssignIndexes(Constants.List.Previous, updatedItems)});
-		this.setState({prevLstSelectedItems: []});
+		this.setState({prevLstSelectedItems: []}, this.checkSingleItemSelected);
 	};
 
 	handleRightArrowOnClick = () => {
@@ -58,7 +79,7 @@ class App extends Component {
 			}
 		});
 
-		this.setState({items: this.reAssignIndexes(Constants.List.Current, updatedItems)});
+		this.setState({items: this.reAssignIndexes(Constants.List.Current, updatedItems)}, this.checkSingleItemSelected);
 		this.setState({currLstSelectedItems: []});
 	};
 
@@ -78,10 +99,8 @@ class App extends Component {
 			if (item.ListID === listId) {
 				let found = listItems.find(reassignedItem => reassignedItem.ItemID === item.ItemID);
 				item.Index = found.Index;
-				return item;
-			} else {
-				return item;
 			}
+			return item;
 		});
 
 		return updatedItems;
@@ -118,6 +137,34 @@ class App extends Component {
 		this.hideNewItemModal();
 	};
 
+	showEditItemModal = () => {
+		this.setState({showEditItemModal: true});
+
+		// Get the item details
+		let selectedItem = this.state.items.find(item => item.ItemID === this.state.selectedItemId);
+		this.setState({editItemName: selectedItem.ItemName});
+		this.setState({editItemHighPriority: selectedItem.HighPriority});
+	};
+
+	hideEditItemModal = () => this.setState({showEditItemModal: false});
+
+	handleEditItemNameOnChange = (event) => this.setState({editItemName: event.target.value});
+
+	handleEditItemOnClick = (event) => {
+		event.preventDefault();
+
+		// Update the selected item's name
+		let updatedItems = this.state.items.map(item => {
+			if (item.ItemID === this.state.selectedItemId) {
+				item.ItemName = this.state.editItemName;
+			}
+			return item;
+		});
+
+		this.setState({items: updatedItems});
+		this.hideEditItemModal();
+	};
+
 	render() {
 		return (
 			<div>
@@ -147,10 +194,16 @@ class App extends Component {
 						</Col>
 					</Row>
 					<Row style={{paddingTop: "15px"}}>
-						<Col>
+						<Col xs={5}>
 							<Button className="mr-2">Save List</Button>
 							<Button className="mr-2">Clear List</Button>
 							<Button>Load List</Button>
+						</Col>
+						<Col xs={2} style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+							<Button onClick={this.showEditItemModal}
+									disabled={!this.state.singleItemSelected}>Edit</Button>
+						</Col>
+						<Col>
 						</Col>
 					</Row>
 				</Container>
@@ -161,6 +214,11 @@ class App extends Component {
 							  newItemHighPriority={this.state.newItemHighPriority}
 							  handlePriorityChange={this.handleNewItemPriorityOnChange}
 							  addItemClick={this.handleAddItemOnClick}/>
+				<EditItemModal modalShow={this.state.showEditItemModal}
+							   modalClose={this.hideEditItemModal}
+							   editItemName={this.state.editItemName}
+							   handleNameChange={this.handleEditItemNameOnChange}
+							   editItemClick={this.handleEditItemOnClick}/>
 			</div>
 		);
 	}
