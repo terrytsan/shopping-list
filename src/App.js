@@ -20,7 +20,8 @@ class App extends Component {
 		singleItemSelected: false,
 		selectedItemId: -1,
 		showEditItemModal: false,
-		editItemName: ""
+		editItemName: "",
+		singleItemSelectedPrevList: false
 	};
 
 	// Checks if only a single item is selected
@@ -31,11 +32,14 @@ class App extends Component {
 		if (singleItemSelected) {
 			if (this.state.prevLstSelectedItems.length === 1) {
 				this.setState({selectedItemId: this.state.prevLstSelectedItems[0]});
+				this.setState({singleItemSelectedPrevList: true});
 			} else {
 				this.setState({selectedItemId: this.state.currLstSelectedItems[0]});
+				this.setState({singleItemSelectedPrevList: false});
 			}
 		} else {
 			this.setState({selectedItemId: -1});
+			this.setState({singleItemSelectedPrevList: false});
 		}
 	};
 
@@ -165,6 +169,13 @@ class App extends Component {
 		this.hideEditItemModal();
 	};
 
+	handleDeleteItemOnClick = () => {
+		if (window.confirm("Are you sure you want to delete this item? This action is permanent.")) {
+			let updatedItems = this.state.items.filter(item => item.ItemID !== this.state.selectedItemId);
+			this.setState({items: updatedItems});
+		}
+	};
+
 	render() {
 		return (
 			<div>
@@ -204,6 +215,8 @@ class App extends Component {
 									disabled={!this.state.singleItemSelected}>Edit</Button>
 						</Col>
 						<Col>
+							<Button onClick={this.handleDeleteItemOnClick}
+									disabled={!this.state.singleItemSelectedPrevList}>Delete</Button>
 						</Col>
 					</Row>
 				</Container>
