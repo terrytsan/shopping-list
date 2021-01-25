@@ -178,6 +178,48 @@ class App extends Component {
 		}
 	};
 
+	handleUpArrowOnClick = () => {
+		let selectedItem = this.state.items.find(item => item.ItemID === this.state.selectedItemId);
+
+		// Decrement index of selected item (move up)
+		let newIndex = selectedItem.Index - 1;
+
+		let updatedItems = this.state.items.map(item => {
+			if (item.Index === newIndex && item.ListID === selectedItem.ListID) {
+				// Increment the item at new index (move down)
+				item.Index = item.Index + 1;
+			}
+			if (item.ItemID === this.state.selectedItemId) {
+				item.Index = newIndex;
+			}
+			return item;
+		});
+
+		// Update items list after reassigning indexes
+		this.setState({items: this.reAssignIndexes(selectedItem.ListID, updatedItems)});
+	};
+
+	handleDownArrowOnClick = () => {
+		let selectedItem = this.state.items.find(item => item.ItemID === this.state.selectedItemId);
+
+		// Increment index of selected item (move down)
+		let newIndex = selectedItem.Index + 1;
+
+		let updatedItems = this.state.items.map(item => {
+			if (item.Index === newIndex && item.ListID === selectedItem.ListID) {
+				// Decrement the item at new index (move up)
+				item.Index = item.Index - 1;
+			}
+			if (item.ItemID === this.state.selectedItemId) {
+				item.Index = newIndex;
+			}
+			return item;
+		});
+
+		// Update items list after reassigning indexes
+		this.setState({items: this.reAssignIndexes(selectedItem.ListID, updatedItems)});
+	};
+
 	render() {
 		return (
 			<div>
@@ -196,8 +238,10 @@ class App extends Component {
 								<Button className="itemsListBtn" onClick={this.handleRightArrowOnClick}>˃</Button>
 							</Row>
 							<Row className="itemsListBtnRow" style={{marginTop: "auto"}}>
-								<Button className="itemsListBtn">˄</Button>
-								<Button className="itemsListBtn">˅</Button>
+								<Button className="itemsListBtn" onClick={this.handleUpArrowOnClick}
+										disabled={!this.state.singleItemSelected}>˄</Button>
+								<Button className="itemsListBtn" onClick={this.handleDownArrowOnClick}
+										disabled={!this.state.singleItemSelected}>˅</Button>
 							</Row>
 						</Col>
 						<Col xs={5}>
