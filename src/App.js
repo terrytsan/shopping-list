@@ -63,6 +63,7 @@ class App extends Component {
 				item.ListID = Constants.List.Current;
 				// Update the index
 				item.Index = currLstLength;
+				currLstLength += 1;
 			}
 		});
 
@@ -80,6 +81,7 @@ class App extends Component {
 				item.ListID = Constants.List.Previous;
 				// Update the index
 				item.Index = prevLstLength;
+				prevLstLength += 1;
 			}
 		});
 
