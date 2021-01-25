@@ -1,17 +1,21 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import CurrentItemsListBox from "./components/CurrentItemsListBox";
-import PreviousItemsListBox from "./components/PreviousItemsListBox";
+import CurrentItems from "./components/CurrentItems";
+import PreviousItems from "./components/PreviousItems";
 import {Button, Col, Container, Row} from "react-bootstrap";
 import {Component} from "react";
 import dummyItems from "./dummyItems.json";
 import * as Constants from './constants.js';
+import NewItemModal from "./components/NewItemModal";
 
 class App extends Component {
 	state = {
 		items: dummyItems.items,
 		prevLstSelectedItems: [],
-		currLstSelectedItems: []
+		currLstSelectedItems: [],
+		showNewItemModal: false,
+		newItemName: "",
+		newItemHighPriority: false
 	};
 
 	handlePreviousLstOnChange = (event) => {
@@ -83,39 +87,81 @@ class App extends Component {
 		return updatedItems;
 	}
 
+	showNewItemModal = () => this.setState({showNewItemModal: true});
+
+	hideNewItemModal = () => this.setState({showNewItemModal: false});
+
+	handleNewItemNameOnChange = (event) => this.setState({newItemName: event.target.value});
+
+	handleNewItemPriorityOnChange = (event) => this.setState({newItemHighPriority: event.target.checked});
+
+	handleAddItemOnClick = (event) => {
+		event.preventDefault();
+		let items = this.state.items;
+		let currLstLength = items.filter(item => item.ListID === Constants.List.Current).length;
+
+		let maxItemId = Math.max.apply(Math, items.map(i => i.ItemID));
+
+		// Add new item to current list
+		let newItem = {
+			"ItemID": maxItemId + 1,
+			"ItemName": this.state.newItemName,
+			"ListID": Constants.List.Current,
+			"HighPriority": this.state.newItemHighPriority,
+			"Index": currLstLength
+		};
+		this.setState({items: this.state.items.concat(newItem)});
+
+		// Cleanup
+		this.setState({newItemName: ""});
+		this.setState({newItemHighPriority: false});
+		this.hideNewItemModal();
+	};
+
 	render() {
 		return (
-			<Container>
-				<Row>
-					<Col xs={5}>
-						<CurrentItemsListBox items={this.state.items}
-											 selectedItems={this.state.currLstSelectedItems}
-											 handleListBoxChange={this.handleCurrentLstOnChange}/>
-					</Col>
-					<Col xs={2} style={{display: "flex", width: "100%", flexDirection: "column", alignItems: "center"}}>
-						<Row className="itemsListBtnRow" style={{}}>
-							<Button className="itemsListBtn" onClick={this.handleLeftArrowOnClick}>˂</Button>
-							<Button className="itemsListBtn" onClick={this.handleRightArrowOnClick}>˃</Button>
-						</Row>
-						<Row className="itemsListBtnRow" style={{marginTop: "auto"}}>
-							<Button className="itemsListBtn">˄</Button>
-							<Button className="itemsListBtn">˅</Button>
-						</Row>
-					</Col>
-					<Col xs={5}>
-						<PreviousItemsListBox items={this.state.items}
-											  selectedItems={this.state.prevLstSelectedItems}
-											  handleListBoxChange={this.handlePreviousLstOnChange}/>
-					</Col>
-				</Row>
-				<Row style={{paddingTop: "15px"}}>
-					<Col>
-						<Button className="mr-2">Save List</Button>
-						<Button className="mr-2">Clear List</Button>
-						<Button>Load List</Button>
-					</Col>
-				</Row>
-			</Container>
+			<div>
+				<Container>
+					<Row>
+						<Col xs={5}>
+							<CurrentItems items={this.state.items}
+										  selectedItems={this.state.currLstSelectedItems}
+										  handleListBoxChange={this.handleCurrentLstOnChange}
+										  newItemClick={this.showNewItemModal}/>
+						</Col>
+						<Col xs={2}
+							 style={{display: "flex", width: "100%", flexDirection: "column", alignItems: "center"}}>
+							<Row className="itemsListBtnRow">
+								<Button className="itemsListBtn" onClick={this.handleLeftArrowOnClick}>˂</Button>
+								<Button className="itemsListBtn" onClick={this.handleRightArrowOnClick}>˃</Button>
+							</Row>
+							<Row className="itemsListBtnRow" style={{marginTop: "auto"}}>
+								<Button className="itemsListBtn">˄</Button>
+								<Button className="itemsListBtn">˅</Button>
+							</Row>
+						</Col>
+						<Col xs={5}>
+							<PreviousItems items={this.state.items}
+										   selectedItems={this.state.prevLstSelectedItems}
+										   handleListBoxChange={this.handlePreviousLstOnChange}/>
+						</Col>
+					</Row>
+					<Row style={{paddingTop: "15px"}}>
+						<Col>
+							<Button className="mr-2">Save List</Button>
+							<Button className="mr-2">Clear List</Button>
+							<Button>Load List</Button>
+						</Col>
+					</Row>
+				</Container>
+				<NewItemModal modalShow={this.state.showNewItemModal}
+							  modalClose={this.hideNewItemModal}
+							  newItemName={this.state.newItemName}
+							  handleNameChange={this.handleNewItemNameOnChange}
+							  newItemHighPriority={this.state.newItemHighPriority}
+							  handlePriorityChange={this.handleNewItemPriorityOnChange}
+							  addItemClick={this.handleAddItemOnClick}/>
+			</div>
 		);
 	}
 }

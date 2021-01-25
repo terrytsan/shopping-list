@@ -3,7 +3,7 @@ import * as PropTypes from "prop-types";
 import {Component} from "react";
 import * as Constants from './../constants.js';
 
-class PreviousItemsListBox extends Component {
+class PreviousItems extends Component {
 	render() {
 		let {items, selectedItems, handleListBoxChange} = this.props;
 
@@ -28,6 +28,6 @@ class PreviousItemsListBox extends Component {
 	}
 }
 
-PreviousItemsListBox.propTypes = {items: PropTypes.any};
+PreviousItems.propTypes = {items: PropTypes.any};
 
-export default PreviousItemsListBox;
+export default PreviousItems;

@@ -1,11 +1,11 @@
-import {Form} from "react-bootstrap";
+import {Button, Col, Form, Row} from "react-bootstrap";
 import * as PropTypes from "prop-types";
 import {Component} from "react";
 import * as Constants from './../constants.js';
 
-class CurrentItemsListBox extends Component {
+class CurrentItems extends Component {
 	render() {
-		let {items, selectedItems, handleListBoxChange} = this.props;
+		let {items, selectedItems, handleListBoxChange, newItemClick} = this.props;
 
 		items = items.filter(item => item.ListID === Constants.List.Current);
 
@@ -14,7 +14,12 @@ class CurrentItemsListBox extends Component {
 
 		return (
 			<div>
-				<h2>Current</h2>
+				<Row>
+					<Col style={{display: "flex", flexDirection: "row"}}>
+						<h2>Current</h2>
+						<Button className="ml-3 my-auto" onClick={newItemClick}>+</Button>
+					</Col>
+				</Row>
 				<Form.Control as="select" name="currentListBox" htmlSize={15} className="itemsListBox" multiple={true}
 							  value={selectedItems} onChange={handleListBoxChange}>
 					{items.map((item, i) =>
@@ -28,6 +33,6 @@ class CurrentItemsListBox extends Component {
 	}
 }
 
-CurrentItemsListBox.propTypes = {items: PropTypes.any};
+CurrentItems.propTypes = {items: PropTypes.any};
 
-export default CurrentItemsListBox;
+export default CurrentItems;
