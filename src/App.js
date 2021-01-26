@@ -290,6 +290,7 @@ class App extends Component {
 						</Col>
 						<Col xs={2}
 							 style={{display: "flex", width: "100%", flexDirection: "column", alignItems: "center"}}>
+							<Row><h2 style={{visibility: "hidden"}}>1</h2></Row>
 							<Row className="itemsListBtnRow">
 								<Button className="itemsListBtn" onClick={this.handleLeftArrowOnClick}>˂</Button>
 								<Button className="itemsListBtn" onClick={this.handleRightArrowOnClick}>˃</Button>
@@ -309,12 +310,13 @@ class App extends Component {
 					</Row>
 					<Row style={{paddingTop: "15px"}}>
 						<Col xs={5}>
-							<Button className="mr-2" onClick={this.handleSaveListOnClick}>Save List</Button>
-							<Button className="mr-2" onClick={this.handleClearListOnClick}>Clear List</Button>
-							<Button onClick={this.handleLoadListOnClick}>Load List</Button>
+							<Button className="mr-2 mb-2" onClick={this.handleSaveListOnClick}>Save List</Button>
+							<Button className="mr-2 mb-2" onClick={this.handleClearListOnClick}>Clear List</Button>
+							<Button className="mb-2" onClick={this.handleLoadListOnClick}>Load List</Button>
 						</Col>
-						<Col xs={2} style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+						<Col xs={2} style={{display: "flex", justifyContent: "center"}}>
 							<Button onClick={this.showEditItemModal}
+									style={{alignSelf: "start"}}
 									disabled={!this.state.singleItemSelected}>Edit</Button>
 						</Col>
 						<Col>
