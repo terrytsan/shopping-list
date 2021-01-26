@@ -2,6 +2,10 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Demo
+
+A demo for the project can be found [here](http://terrytsan.github.io/shopping-list)
+
 ## Available Scripts
 
 In the project directory, you can run:
