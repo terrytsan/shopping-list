@@ -2,7 +2,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CurrentItems from "./components/CurrentItems";
 import PreviousItems from "./components/PreviousItems";
-import {Button, Col, Container, Row} from "react-bootstrap";
+import {Button, Col, Container, Nav, Navbar, Row} from "react-bootstrap";
 import {Component} from "react";
 import dummyItems from "./dummyItems.json";
 import * as Constants from './constants.js';
@@ -280,6 +280,16 @@ class App extends Component {
 	render() {
 		return (
 			<div>
+				<Navbar bg="dark" variant="dark">
+					<Navbar.Brand>Shopping List</Navbar.Brand>
+					<Nav>
+						<Nav.Link>Create New</Nav.Link>
+						<Nav.Link>Load Saved</Nav.Link>
+						<Nav.Link>Your account</Nav.Link>
+						<Nav.Link>About us</Nav.Link>
+						<Nav.Link>Contact</Nav.Link>
+					</Nav>
+				</Navbar>
 				<Container>
 					<Row>
 						<Col xs={5}>
