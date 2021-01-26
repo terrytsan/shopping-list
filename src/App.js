@@ -23,7 +23,8 @@ class App extends Component {
 		showEditItemModal: false,
 		editItemName: "",
 		editItemFormErrors: {"itemName": ""},
-		singleItemSelectedPrevList: false
+		singleItemSelectedPrevList: false,
+		singleItemSelectedCurrList: false
 	};
 
 	// Checks if only a single item is selected
@@ -35,9 +36,11 @@ class App extends Component {
 			if (this.state.prevLstSelectedItems.length === 1) {
 				this.setState({selectedItemId: this.state.prevLstSelectedItems[0]});
 				this.setState({singleItemSelectedPrevList: true});
+				this.setState({singleItemSelectedCurrList: false});
 			} else {
 				this.setState({selectedItemId: this.state.currLstSelectedItems[0]});
 				this.setState({singleItemSelectedPrevList: false});
+				this.setState({singleItemSelectedCurrList: true});
 			}
 		} else {
 			this.setState({selectedItemId: -1});
@@ -307,9 +310,9 @@ class App extends Component {
 							</Row>
 							<Row className="itemsListBtnRow" style={{marginTop: "auto"}}>
 								<Button className="itemsListBtn" onClick={this.handleUpArrowOnClick}
-										disabled={!this.state.singleItemSelected}>˄</Button>
+										disabled={!this.state.singleItemSelectedCurrList}>˄</Button>
 								<Button className="itemsListBtn" onClick={this.handleDownArrowOnClick}
-										disabled={!this.state.singleItemSelected}>˅</Button>
+										disabled={!this.state.singleItemSelectedCurrList}>˅</Button>
 							</Row>
 						</Col>
 						<Col xs={5}>
