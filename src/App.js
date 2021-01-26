@@ -25,7 +25,8 @@ class App extends Component {
 		editItemName: "",
 		editItemFormErrors: {"itemName": ""},
 		singleItemSelectedPrevList: false,
-		singleItemSelectedCurrList: false
+		singleItemSelectedCurrList: false,
+		exportBtnTxt: "Export List"
 	};
 
 	// Checks if only a single item is selected
@@ -307,6 +308,21 @@ class App extends Component {
 		}
 	};
 
+	handleExportListOnClick = () => {
+		// Extract the header row
+		let csvText = Object.keys(this.state.items[0]).map(header => header).join(",") + "\n";
+
+		csvText = this.state.items.reduce((csvText, current) => {
+			csvText += Object.values(current).map(value => value).join(",") + "\n";
+			return csvText;
+		}, csvText);
+		console.log(csvText);
+
+		if (navigator.clipboard) {
+			navigator.clipboard.writeText(csvText).then(() => this.setState({exportBtnTxt: "Copied to CLP"}), () => this.setState({exportBtnTxt: "Failed to copy."}));
+		}
+	};
+
 	toggleItemHighPriorityOnClick = (event, id) => {
 		event.stopPropagation();
 		let updatedItems = this.state.items.map(item => {
@@ -371,7 +387,9 @@ class App extends Component {
 						<Col xs={5}>
 							<Button className="mr-2 mb-2" onClick={this.handleSaveListOnClick}>Save List</Button>
 							<Button className="mr-2 mb-2" onClick={this.handleClearListOnClick}>Clear List</Button>
-							<Button className="mb-2" onClick={this.handleLoadListOnClick}>Load List</Button>
+							<Button className="mr-2 mb-2" onClick={this.handleLoadListOnClick}>Load List</Button>
+							<Button className="mb-2"
+									onClick={this.handleExportListOnClick}>{this.state.exportBtnTxt}</Button>
 						</Col>
 						<Col xs={2} style={{display: "flex", justifyContent: "center"}}>
 							<Button onClick={this.showEditItemModal}
