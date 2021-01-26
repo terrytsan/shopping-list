@@ -256,6 +256,27 @@ class App extends Component {
 		this.setState({items: this.reAssignIndexes(selectedItem.ListID, updatedItems)});
 	};
 
+	handleSaveListOnClick = () => {
+		if (typeof (Storage) !== "undefined") {
+			localStorage.setItem("items", JSON.stringify(this.state.items));
+		}
+	};
+
+	handleLoadListOnClick = () => {
+		if (typeof (Storage) !== "undefined") {
+			let storedItems = localStorage.items;
+			if (storedItems) {
+				this.setState({items: JSON.parse(storedItems)});
+			}
+		}
+	};
+
+	handleClearListOnClick = () => {
+		if (typeof (Storage) !== "undefined") {
+			localStorage.removeItem("items");
+		}
+	};
+
 	render() {
 		return (
 			<div>
@@ -288,9 +309,9 @@ class App extends Component {
 					</Row>
 					<Row style={{paddingTop: "15px"}}>
 						<Col xs={5}>
-							<Button className="mr-2">Save List</Button>
-							<Button className="mr-2">Clear List</Button>
-							<Button>Load List</Button>
+							<Button className="mr-2" onClick={this.handleSaveListOnClick}>Save List</Button>
+							<Button className="mr-2" onClick={this.handleClearListOnClick}>Clear List</Button>
+							<Button onClick={this.handleLoadListOnClick}>Load List</Button>
 						</Col>
 						<Col xs={2} style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
 							<Button onClick={this.showEditItemModal}
