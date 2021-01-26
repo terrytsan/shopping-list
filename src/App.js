@@ -17,10 +17,12 @@ class App extends Component {
 		showNewItemModal: false,
 		newItemName: "",
 		newItemHighPriority: false,
+		newItemFormErrors: {"itemName": ""},
 		singleItemSelected: false,
 		selectedItemId: -1,
 		showEditItemModal: false,
 		editItemName: "",
+		editItemFormErrors: {"itemName": ""},
 		singleItemSelectedPrevList: false
 	};
 
@@ -114,7 +116,13 @@ class App extends Component {
 
 	showNewItemModal = () => this.setState({showNewItemModal: true});
 
-	hideNewItemModal = () => this.setState({showNewItemModal: false});
+	hideNewItemModal = () => {
+		// Cleanup
+		this.setState({newItemName: ""});
+		this.setState({newItemFormErrors: {}});
+		this.setState({newItemHighPriority: false});
+		this.setState({showNewItemModal: false});
+	};
 
 	handleNewItemNameOnChange = (event) => this.setState({newItemName: event.target.value});
 
@@ -127,7 +135,7 @@ class App extends Component {
 
 		let maxItemId = Math.max.apply(Math, items.map(i => i.ItemID));
 
-		// Add new item to current list
+		// Validate item
 		let newItem = {
 			"ItemID": maxItemId + 1,
 			"ItemName": this.state.newItemName,
@@ -135,13 +143,29 @@ class App extends Component {
 			"HighPriority": this.state.newItemHighPriority,
 			"Index": currLstLength
 		};
-		this.setState({items: this.state.items.concat(newItem)});
-
-		// Cleanup
-		this.setState({newItemName: ""});
-		this.setState({newItemHighPriority: false});
-		this.hideNewItemModal();
+		let validationErrors = this.validateItem(newItem);
+		if (validationErrors.isValid) {
+			this.setState({items: this.state.items.concat(newItem)});
+			this.hideNewItemModal();
+		} else {
+			this.setState({newItemFormErrors: validationErrors});
+		}
 	};
+
+	validateItem(item) {
+		// Holds the errors messages to output.
+		// isValid indicates if any input has a fault
+		let errors = {
+			itemName: "",
+			isValid: true
+		};
+
+		if (this.state.items.find(i => i.ItemName === item.ItemName)) {
+			errors.itemName = "Can't be duplicate of existing item.";
+			errors.isValid = false;
+		}
+		return errors;
+	}
 
 	showEditItemModal = () => {
 		this.setState({showEditItemModal: true});
@@ -152,23 +176,35 @@ class App extends Component {
 		this.setState({editItemHighPriority: selectedItem.HighPriority});
 	};
 
-	hideEditItemModal = () => this.setState({showEditItemModal: false});
+	hideEditItemModal = () => {
+		// Cleanup
+		this.setState({editItemFormErrors: {}});
+		this.setState({showEditItemModal: false});
+	};
 
 	handleEditItemNameOnChange = (event) => this.setState({editItemName: event.target.value});
 
 	handleEditItemOnClick = (event) => {
 		event.preventDefault();
 
-		// Update the selected item's name
-		let updatedItems = this.state.items.map(item => {
-			if (item.ItemID === this.state.selectedItemId) {
-				item.ItemName = this.state.editItemName;
-			}
-			return item;
-		});
+		// Validate item
+		let editedItem = {"ItemName": this.state.editItemName};
+		let validationErrors = this.validateItem(editedItem);
 
-		this.setState({items: updatedItems});
-		this.hideEditItemModal();
+		if (validationErrors.isValid) {
+			// Update the selected item's name
+			let updatedItems = this.state.items.map(item => {
+				if (item.ItemID === this.state.selectedItemId) {
+					item.ItemName = this.state.editItemName;
+				}
+				return item;
+			});
+
+			this.setState({items: updatedItems});
+			this.hideEditItemModal();
+		} else {
+			this.setState({editItemFormErrors: validationErrors});
+		}
 	};
 
 	handleDeleteItemOnClick = () => {
@@ -272,12 +308,14 @@ class App extends Component {
 							  handleNameChange={this.handleNewItemNameOnChange}
 							  newItemHighPriority={this.state.newItemHighPriority}
 							  handlePriorityChange={this.handleNewItemPriorityOnChange}
-							  addItemClick={this.handleAddItemOnClick}/>
+							  addItemClick={this.handleAddItemOnClick}
+							  errors={this.state.newItemFormErrors}/>
 				<EditItemModal modalShow={this.state.showEditItemModal}
 							   modalClose={this.hideEditItemModal}
 							   editItemName={this.state.editItemName}
 							   handleNameChange={this.handleEditItemNameOnChange}
-							   editItemClick={this.handleEditItemOnClick}/>
+							   editItemClick={this.handleEditItemOnClick}
+							   errors={this.state.editItemFormErrors}/>
 			</div>
 		);
 	}

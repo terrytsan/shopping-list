@@ -1,7 +1,7 @@
 import {Button, Form, Modal} from "react-bootstrap";
 
 function EditItemModal({
-						   modalShow, modalClose, editItemName, handleNameChange, editItemClick
+						   modalShow, modalClose, editItemName, handleNameChange, editItemClick, errors
 					   }) {
 	return (
 		<Modal show={modalShow} onHide={modalClose} animation={false}>
@@ -12,7 +12,8 @@ function EditItemModal({
 				<Form>
 					<Form.Group>
 						<Form.Control type="text" placeholder="Item Name" value={editItemName}
-									  onChange={handleNameChange}/>
+									  onChange={handleNameChange} isInvalid={!!errors.itemName}/>
+						<Form.Control.Feedback type="invalid">{errors.itemName}</Form.Control.Feedback>
 					</Form.Group>
 					<Button type="submit" onClick={editItemClick}>Edit</Button>
 				</Form>

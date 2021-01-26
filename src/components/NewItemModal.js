@@ -2,7 +2,7 @@ import {Button, Form, Modal} from "react-bootstrap";
 
 function NewItemModal({
 						  modalShow, modalClose, newItemName, handleNameChange, newItemHighPriority,
-						  handlePriorityChange, addItemClick
+						  handlePriorityChange, addItemClick, errors
 					  }) {
 	return (
 		<Modal show={modalShow} onHide={modalClose} animation={false}>
@@ -13,7 +13,8 @@ function NewItemModal({
 				<Form>
 					<Form.Group>
 						<Form.Control type="text" placeholder="Item Name" value={newItemName}
-									  onChange={handleNameChange}/>
+									  onChange={handleNameChange} isInvalid={!!errors.itemName}/>
+						<Form.Control.Feedback type="invalid">{errors.itemName}</Form.Control.Feedback>
 					</Form.Group>
 					<Form.Group>
 						<Form.Check label="High Priority" checked={newItemHighPriority}
