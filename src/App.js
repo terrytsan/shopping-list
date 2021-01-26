@@ -8,6 +8,7 @@ import dummyItems from "./dummyItems.json";
 import * as Constants from './constants.js';
 import NewItemModal from "./components/NewItemModal";
 import EditItemModal from "./components/EditItemModal";
+import NavbarCollapse from "react-bootstrap/NavbarCollapse";
 
 class App extends Component {
 	state = {
@@ -45,6 +46,7 @@ class App extends Component {
 		} else {
 			this.setState({selectedItemId: -1});
 			this.setState({singleItemSelectedPrevList: false});
+			this.setState({singleItemSelectedCurrList: false});
 		}
 	};
 
@@ -295,15 +297,18 @@ class App extends Component {
 	render() {
 		return (
 			<div>
-				<Navbar bg="dark" variant="dark">
+				<Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
 					<Navbar.Brand>Shopping List</Navbar.Brand>
-					<Nav>
-						<Nav.Link>Create New</Nav.Link>
-						<Nav.Link>Load Saved</Nav.Link>
-						<Nav.Link>Your account</Nav.Link>
-						<Nav.Link>About us</Nav.Link>
-						<Nav.Link>Contact</Nav.Link>
-					</Nav>
+					<Navbar.Toggle/>
+					<NavbarCollapse>
+						<Nav>
+							<Nav.Link>Create New</Nav.Link>
+							<Nav.Link>Load Saved</Nav.Link>
+							<Nav.Link>Your account</Nav.Link>
+							<Nav.Link>About us</Nav.Link>
+							<Nav.Link>Contact</Nav.Link>
+						</Nav>
+					</NavbarCollapse>
 				</Navbar>
 				<Container>
 					<Row>
