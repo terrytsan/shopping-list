@@ -193,7 +193,6 @@ class App extends Component {
 		// Get the item details
 		let selectedItem = this.state.items.find(item => item.ItemID === this.state.selectedItemId);
 		this.setState({editItemName: selectedItem.ItemName});
-		this.setState({editItemHighPriority: selectedItem.HighPriority});
 	};
 
 	hideEditItemModal = () => {
