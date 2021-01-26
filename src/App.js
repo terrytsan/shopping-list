@@ -240,6 +240,9 @@ class App extends Component {
 		let newIndex = selectedItem.Index - 1;
 		let switchItem = this.state.items.find(item => (item.Index === newIndex && item.ListID === selectedItem.ListID));
 
+		// Abort if there is no item above the selected item
+		if (!switchItem) return;
+
 		// Prevent low priority items being moved above high priority
 		// Only perform swap if selected item is high priority OR switchItem is low priority
 		if (selectedItem.HighPriority || !switchItem.HighPriority) {
