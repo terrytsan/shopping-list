@@ -1,11 +1,11 @@
-import {Form} from "react-bootstrap";
+import {ListGroup, ListGroupItem} from "react-bootstrap";
 import * as PropTypes from "prop-types";
 import {Component} from "react";
 import * as Constants from './../constants.js';
 
 class PreviousItems extends Component {
 	render() {
-		let {items, selectedItems, handleListBoxChange} = this.props;
+		let {items, selectedItems, listItemClick} = this.props;
 
 		items = items.filter(item => item.ListID === Constants.List.Previous);
 
@@ -15,14 +15,15 @@ class PreviousItems extends Component {
 		return (
 			<div>
 				<h2>Previous</h2>
-				<Form.Control as="select" name="previousListBox" htmlSize={15} className="itemsListBox" multiple={true}
-							  value={selectedItems} onChange={handleListBoxChange}>
-					{items.map((item, i) =>
-						<option key={i} value={item.ItemID}>
-							{item.ItemName}
-						</option>
-					)}
-				</Form.Control>
+				<div className="border">
+					<ListGroup className="listGroupFixedHeight">
+						{items.map((item, i) =>
+							<ListGroupItem action key={i} id={item.ItemID}
+										   className={`py-1 px-2 border-0 ` + (selectedItems.includes(item.ItemID) ?
+											   `active` : ``)} onClick={listItemClick}>{item.ItemName}</ListGroupItem>
+						)}
+					</ListGroup>
+				</div>
 			</div>
 		);
 	}

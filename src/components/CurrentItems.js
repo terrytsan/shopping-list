@@ -1,11 +1,11 @@
-import {Button, Col, Form, Row} from "react-bootstrap";
+import {Button, Col, ListGroup, ListGroupItem, Row} from "react-bootstrap";
 import * as PropTypes from "prop-types";
 import {Component} from "react";
 import * as Constants from './../constants.js';
 
 class CurrentItems extends Component {
 	render() {
-		let {items, selectedItems, handleListBoxChange, newItemClick} = this.props;
+		let {items, selectedItems, listItemClick, newItemClick} = this.props;
 
 		items = items.filter(item => item.ListID === Constants.List.Current);
 
@@ -20,14 +20,15 @@ class CurrentItems extends Component {
 						<Button className="ml-3 my-auto" onClick={newItemClick}>+</Button>
 					</Col>
 				</Row>
-				<Form.Control as="select" name="currentListBox" htmlSize={15} className="itemsListBox" multiple={true}
-							  value={selectedItems} onChange={handleListBoxChange}>
-					{items.map((item, i) =>
-						<option key={i} value={item.ItemID}>
-							{item.ItemName}
-						</option>
-					)}
-				</Form.Control>
+				<div className="border">
+					<ListGroup className="listGroupFixedHeight">
+						{items.map((item, i) =>
+							<ListGroupItem action key={i} id={item.ItemID}
+										   className={`py-1 px-2 border-0 ` + (selectedItems.includes(item.ItemID) ?
+											   `active` : ``)} onClick={listItemClick}>{item.ItemName}</ListGroupItem>
+						)}
+					</ListGroup>
+				</div>
 			</div>
 		);
 	}

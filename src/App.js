@@ -48,14 +48,26 @@ class App extends Component {
 		}
 	};
 
-	handlePreviousLstOnChange = (event) => {
-		let selected = Array.from(event.target.selectedOptions, sel => parseInt(sel.value));
-		this.setState({prevLstSelectedItems: selected}, this.checkSingleItemSelected);
+	handlePreviousLstItemClick = (event) => {
+		let clickedItemId = parseInt(event.target.id);
+
+		// If already selected, remove
+		if (this.state.prevLstSelectedItems.includes(clickedItemId)) {
+			this.setState({prevLstSelectedItems: this.state.prevLstSelectedItems.filter(id => id !== clickedItemId)}, this.checkSingleItemSelected);
+		} else {
+			this.setState({prevLstSelectedItems: this.state.prevLstSelectedItems.concat(clickedItemId)}, this.checkSingleItemSelected);
+		}
 	};
 
-	handleCurrentLstOnChange = (event) => {
-		let selected = Array.from(event.target.selectedOptions, sel => parseInt(sel.value));
-		this.setState({currLstSelectedItems: selected}, this.checkSingleItemSelected);
+	handleCurrentLstItemClick = (event) => {
+		let clickedItemId = parseInt(event.target.id);
+
+		// If already selected, remove
+		if (this.state.currLstSelectedItems.includes(clickedItemId)) {
+			this.setState({currLstSelectedItems: this.state.currLstSelectedItems.filter(id => id !== clickedItemId)}, this.checkSingleItemSelected);
+		} else {
+			this.setState({currLstSelectedItems: this.state.currLstSelectedItems.concat(clickedItemId)}, this.checkSingleItemSelected);
+		}
 	};
 
 	handleLeftArrowOnClick = () => {
@@ -298,7 +310,7 @@ class App extends Component {
 						<Col xs={5}>
 							<CurrentItems items={this.state.items}
 										  selectedItems={this.state.currLstSelectedItems}
-										  handleListBoxChange={this.handleCurrentLstOnChange}
+										  listItemClick={this.handleCurrentLstItemClick}
 										  newItemClick={this.showNewItemModal}/>
 						</Col>
 						<Col xs={2}
@@ -318,7 +330,7 @@ class App extends Component {
 						<Col xs={5}>
 							<PreviousItems items={this.state.items}
 										   selectedItems={this.state.prevLstSelectedItems}
-										   handleListBoxChange={this.handlePreviousLstOnChange}/>
+										   listItemClick={this.handlePreviousLstItemClick}/>
 						</Col>
 					</Row>
 					<Row style={{paddingTop: "15px"}}>
