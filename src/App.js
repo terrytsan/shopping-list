@@ -101,6 +101,8 @@ class App extends Component {
 				// Update the index
 				item.Index = prevLstLength;
 				prevLstLength += 1;
+				// Strip high priority status
+				item.HighPriority = false;
 			}
 		});
 
@@ -158,7 +160,7 @@ class App extends Component {
 			"ItemName": this.state.newItemName,
 			"ListID": Constants.List.Current,
 			"HighPriority": this.state.newItemHighPriority,
-			"Index": currLstLength
+			"Index": (this.state.newItemHighPriority) ? -1 : currLstLength
 		};
 		let validationErrors = this.validateItem(newItem);
 		if (validationErrors.isValid) {
@@ -236,20 +238,26 @@ class App extends Component {
 
 		// Decrement index of selected item (move up)
 		let newIndex = selectedItem.Index - 1;
+		let switchItem = this.state.items.find(item => (item.Index === newIndex && item.ListID === selectedItem.ListID));
 
-		let updatedItems = this.state.items.map(item => {
-			if (item.Index === newIndex && item.ListID === selectedItem.ListID) {
-				// Increment the item at new index (move down)
-				item.Index = item.Index + 1;
-			}
-			if (item.ItemID === this.state.selectedItemId) {
-				item.Index = newIndex;
-			}
-			return item;
-		});
+		// Prevent low priority items being moved above high priority
+		// Only perform swap if selected item is high priority OR switchItem is low priority
+		if (selectedItem.HighPriority || !switchItem.HighPriority) {
 
-		// Update items list after reassigning indexes
-		this.setState({items: this.reAssignIndexes(selectedItem.ListID, updatedItems)});
+			let updatedItems = this.state.items.map(item => {
+				if (item.Index === newIndex && item.ListID === selectedItem.ListID) {
+					// Increment the item at new index (move down)
+					item.Index = item.Index + 1;
+				}
+				if (item.ItemID === this.state.selectedItemId) {
+					item.Index = newIndex;
+				}
+				return item;
+			});
+
+			// Update items list after reassigning indexes
+			this.setState({items: this.reAssignIndexes(selectedItem.ListID, updatedItems)});
+		}
 	};
 
 	handleDownArrowOnClick = () => {
@@ -258,19 +266,24 @@ class App extends Component {
 		// Increment index of selected item (move down)
 		let newIndex = selectedItem.Index + 1;
 
-		let updatedItems = this.state.items.map(item => {
-			if (item.Index === newIndex && item.ListID === selectedItem.ListID) {
-				// Decrement the item at new index (move up)
-				item.Index = item.Index - 1;
-			}
-			if (item.ItemID === this.state.selectedItemId) {
-				item.Index = newIndex;
-			}
-			return item;
-		});
+		let switchItem = this.state.items.find(item => (item.Index === newIndex && item.ListID === selectedItem.ListID));
 
-		// Update items list after reassigning indexes
-		this.setState({items: this.reAssignIndexes(selectedItem.ListID, updatedItems)});
+		// Only move down if selected item is low priority
+		if ((selectedItem.HighPriority && switchItem.HighPriority) || !selectedItem.HighPriority) {
+			let updatedItems = this.state.items.map(item => {
+				if (item.Index === newIndex && item.ListID === selectedItem.ListID) {
+					// Decrement the item at new index (move up)
+					item.Index = item.Index - 1;
+				}
+				if (item.ItemID === this.state.selectedItemId) {
+					item.Index = newIndex;
+				}
+				return item;
+			});
+
+			// Update items list after reassigning indexes
+			this.setState({items: this.reAssignIndexes(selectedItem.ListID, updatedItems)});
+		}
 	};
 
 	handleSaveListOnClick = () => {
@@ -292,6 +305,21 @@ class App extends Component {
 		if (typeof (Storage) !== "undefined") {
 			localStorage.removeItem("items");
 		}
+	};
+
+	toggleItemHighPriorityOnClick = (event, id) => {
+		event.stopPropagation();
+		let updatedItems = this.state.items.map(item => {
+			if (item.ItemID === id) {
+				item.HighPriority = !item.HighPriority;
+				// Move item to top/bottom depending on new priority
+				item.Index = (item.HighPriority) ? -1 :
+					this.state.items.filter(i => i.ListID === Constants.List.Current).length;
+			}
+			return item;
+		});
+
+		this.setState({items: this.reAssignIndexes(Constants.List.Current, updatedItems)});
 	};
 
 	render() {
@@ -316,6 +344,7 @@ class App extends Component {
 							<CurrentItems items={this.state.items}
 										  selectedItems={this.state.currLstSelectedItems}
 										  listItemClick={this.handleCurrentLstItemClick}
+										  tglHighPriorityClick={this.toggleItemHighPriorityOnClick}
 										  newItemClick={this.showNewItemModal}/>
 						</Col>
 						<Col xs={2}

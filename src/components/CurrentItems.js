@@ -2,10 +2,11 @@ import {Button, Col, ListGroup, ListGroupItem, Row} from "react-bootstrap";
 import * as PropTypes from "prop-types";
 import {Component} from "react";
 import * as Constants from './../constants.js';
+import {Exclamation} from "react-bootstrap-icons";
 
 class CurrentItems extends Component {
 	render() {
-		let {items, selectedItems, listItemClick, newItemClick} = this.props;
+		let {items, selectedItems, listItemClick, tglHighPriorityClick, newItemClick} = this.props;
 
 		items = items.filter(item => item.ListID === Constants.List.Current);
 
@@ -24,8 +25,13 @@ class CurrentItems extends Component {
 					<ListGroup className="listGroupFixedHeight">
 						{items.map((item, i) =>
 							<ListGroupItem action key={i} id={item.ItemID}
-										   className={`py-1 px-2 border-0 ` + (selectedItems.includes(item.ItemID) ?
-											   `active` : ``)} onClick={listItemClick}>{item.ItemName}</ListGroupItem>
+										   className={`py-1 px-2 border-0 ` + (selectedItems.includes(item.ItemID) &&
+											   `active`)} onClick={listItemClick}>
+								<span id={item.ItemID} className={item.HighPriority ? `highPriority` : `stdPriority`}
+									  onClick={(e) => tglHighPriorityClick(e, item.ItemID)}><Exclamation
+									size={20}/></span>
+								{item.ItemName}
+							</ListGroupItem>
 						)}
 					</ListGroup>
 				</div>

@@ -21,3 +21,11 @@
     max-height: 350px;
     overflow-y: auto;
 }
+
+.highPriority {
+    color: red;
+}
+
+.stdPriority {
+    color: grey;
+}
